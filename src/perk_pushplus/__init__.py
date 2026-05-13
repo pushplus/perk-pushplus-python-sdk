@@ -47,6 +47,9 @@ from .models import (
     CpItem,
     FriendItem,
     FriendQrCode,
+    ImageItem,
+    ImageUploadResult,
+    ImageUploadToken,
     MailDetail,
     MailItem,
     MessageCompleteInfo,
@@ -84,7 +87,7 @@ from .models import (
 )
 from .rate_limit import RateLimitGuard
 
-__version__ = "1.0.0"
+__version__ = "1.0.1"
 
 __all__ = [
     "__version__",
@@ -152,4 +155,7 @@ __all__ = [
     "PreDetail",
     "PreSaveRequest",
     "PreTestRequest",
+    "ImageUploadToken",
+    "ImageUploadResult",
+    "ImageItem",
 ]

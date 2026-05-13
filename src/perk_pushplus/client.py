@@ -10,6 +10,7 @@ from .api import (
     ChannelApi,
     ClawBotApi,
     FriendApi,
+    ImageApi,
     MessageApi,
     MessageTokenApi,
     OpenMessageApi,
@@ -74,6 +75,7 @@ class PushPlusClient:
         self.claw_bot = ClawBotApi(config, self.http_requester, self.access_key_manager)
         self.setting = SettingApi(config, self.http_requester, self.access_key_manager)
         self.pre = PreApi(config, self.http_requester, self.access_key_manager)
+        self.image = ImageApi(config, self.http_requester, self.access_key_manager)
 
     @classmethod
     def of(cls, config: PushPlusConfig) -> "PushPlusClient":

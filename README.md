@@ -3,7 +3,7 @@
 [pushplus(推送加)](https://www.pushplus.plus) 官方接口的 Python SDK，覆盖 **消息接口** 与 **全部开放接口**。
 
 - **消息接口**（`/send`、`/batchSend`）：单渠道 + 多渠道发送，含 Builder API。
-- **开放接口**（`/api/open/...`）：用户、消息、消息 token、群组、群组用户、好友、webhook、渠道、ClawBot、功能设置、预处理信息。
+- **开放接口**（`/api/open/...`）：用户、消息、消息 token、群组、群组用户、好友、webhook、渠道、ClawBot、功能设置、预处理信息、图片服务。
 - **AccessKey 自动管理**：缓存 + 过期前自动刷新；`code=401` 自动刷新并重试一次。
 - **本地限流守卫**：命中 `code=900` 后按 token 短路同 token 后续发送，避免被服务端长期封禁。
 - **回调解析**：`message_complate`、`add_topic_user`、`add_friend` 三类回调统一解析。
@@ -107,7 +107,48 @@ client.setting.change_is_send(1)  # 启用发送
 
 # 预处理（会员）
 client.pre.test(...)
+
+# 图片服务（一行上传到 PushPlus 图床）
+r = client.image.upload_file("/tmp/logo.png")
+print(r.url)  # 可访问的图片地址
+imgs = client.image.list(PageQuery.of(1, 10))
+client.image.delete(imgs.list[0].id)
 ```
+
+### 图片服务
+
+PushPlus 基于七牛云提供图片图床（30 天有效，可主动删除）。SDK 把「获取上传凭证 → multipart 表单上传 → 解析 URL」封装成一步：
+
+```python
+from pathlib import Path
+from perk_pushplus import ImageUploadToken, PageQuery
+
+# 1) 最常用：一行上传本地文件，得到可访问的图片 URL
+r = client.image.upload_file(Path("/tmp/logo.png"))
+print(r.url)
+
+# 2) 直接上传字节数组
+client.image.upload_bytes(b"...", "screenshot.png")
+
+# 3) 上传二进制流
+with open("/tmp/a.png", "rb") as fp:
+    client.image.upload_stream(fp, "a.png")
+
+# 4) 已上传图片列表
+page = client.image.list(PageQuery.of(1, 10))
+
+# 5) 主动删除（未删除的图片默认 30 天后由系统自动清理）
+client.image.delete(page.list[0].id)
+```
+
+如需自行控制凭证获取与上传过程（例如缓存 token、分布式上传）：
+
+```python
+token: ImageUploadToken = client.image.get_upload_token()
+result = client.image.upload(token, b"...bytes...", "a.png", "image/png")
+```
+
+> 上传图片的真正请求会按七牛云规范以 `multipart/form-data` 提交到 `uploadUrl`，**不会**携带 PushPlus 的 `access-key`；其余三个接口（获取凭证 / 列表 / 删除）走 PushPlus 开放接口，自动带上 `access-key`。
 
 ### 5. 异步发送
 

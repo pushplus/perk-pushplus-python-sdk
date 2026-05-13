@@ -37,6 +37,7 @@ from .open_channel import CpItem, MailDetail, MailItem, MpItem
 from .open_clawbot import ClawBotInfo, ClawBotMessage, ClawBotQrCode
 from .open_setting import UserDefaultDetail, UserDefaultItem, UserDefaultSaveRequest
 from .open_pre import PreDetail, PreItem, PreSaveRequest, PreTestRequest
+from .open_image import ImageItem, ImageUploadResult, ImageUploadToken
 
 __all__ = [
     "ApiResponse",
@@ -87,4 +88,7 @@ __all__ = [
     "PreDetail",
     "PreSaveRequest",
     "PreTestRequest",
+    "ImageUploadToken",
+    "ImageUploadResult",
+    "ImageItem",
 ]

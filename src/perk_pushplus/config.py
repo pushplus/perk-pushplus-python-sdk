@@ -62,7 +62,7 @@ class PushPlusConfig:
     可显式设置 ``2 * 86400`` 等更长值来减少无用试探。
     """
 
-    user_agent: str = "perk-pushplus-python-sdk/1.0.0"
+    user_agent: str = "perk-pushplus-python-sdk/1.0.1"
     """HTTP User-Agent 头。"""
 
     extra_headers: dict = field(default_factory=dict)
