@@ -77,11 +77,23 @@ def test_user_my_info_passes_access_key_header():
     req.push(
         "/api/open/user/myInfo",
         200,
-        _ok({"nickName": "陈大人", "openId": "oid", "headImgUrl": "https://x"}),
+        _ok(
+            {
+                "nickName": "陈大人",
+                "openId": "oid",
+                "headImgUrl": "https://x",
+                "vipInfo": {"isVip": 1, "lastDay": "2026-12-31"},
+                "verifyStatus": 1,
+            }
+        ),
     )
     client = _build_client(req)
     info = client.user.my_info()
     assert info.nickName == "陈大人"
+    assert info.vipInfo is not None
+    assert info.vipInfo.isVip == 1
+    assert info.vipInfo.lastDay == "2026-12-31"
+    assert info.verifyStatus == 1
     headers = req.calls[1][2]  # 第 0 次是 getAccessKey
     assert headers and headers.get("access-key") == "ak-1"
 

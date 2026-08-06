@@ -24,6 +24,8 @@ def test_template_codes():
     assert Template.MARKDOWN.code == "markdown"
     assert Template.CLOUD_MONITOR.value == "cloudMonitor"
     assert Template.FORM.value == "form"
+    assert Template.DOC.value == "doc"
+    assert Template.EXCEL.value == "excel"
 
 
 def test_callback_event_message_complete_keep_typo():

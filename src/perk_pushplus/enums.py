@@ -61,6 +61,10 @@ class Template(_StrCodeEnum):
     PAY = "pay"
     FORM = "form"
     """表单格式模板；发送时需传 pushId（表单编码）。"""
+    DOC = "doc"
+    """文档格式模板（push 文档）；发送时需传 pushId。"""
+    EXCEL = "excel"
+    """表格格式模板（push 表格）；发送时需传 pushId。"""
 
     @property
     def code(self) -> str:

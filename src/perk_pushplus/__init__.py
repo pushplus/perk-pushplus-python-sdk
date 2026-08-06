@@ -82,12 +82,13 @@ from .models import (
     UserDefaultSaveRequest,
     UserInfo,
     UserLimitTime,
+    VipInfo,
     WebhookItem,
     WebhookSaveRequest,
 )
 from .rate_limit import RateLimitGuard
 
-__version__ = "1.1.0"
+__version__ = "1.1.1"
 
 __all__ = [
     "__version__",
@@ -123,6 +124,7 @@ __all__ = [
     "MessageItem",
     "SendMessageResult",
     "UserInfo",
+    "VipInfo",
     "UserLimitTime",
     "SendCount",
     "MessageTokenItem",

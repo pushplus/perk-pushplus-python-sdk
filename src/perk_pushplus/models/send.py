@@ -25,7 +25,7 @@ class SendRequest:
     timestamp: Optional[int] = None
     to: Optional[str] = None
     pre: Optional[str] = None
-    # push 表单编码；template 为 form 时必传。
+    # push 编码；template 为 form/doc/excel 时必传。
     pushId: Optional[str] = None
 
     @staticmethod
@@ -123,7 +123,7 @@ class BatchSendRequest:
     timestamp: Optional[int] = None
     to: Optional[str] = None
     pre: Optional[str] = None
-    # push 表单编码；template 为 form 时必传。
+    # push 编码；template 为 form/doc/excel 时必传。
     pushId: Optional[str] = None
 
     @staticmethod

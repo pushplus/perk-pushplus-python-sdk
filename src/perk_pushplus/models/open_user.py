@@ -6,6 +6,16 @@ from typing import Optional
 
 
 @dataclass
+class VipInfo:
+    """会员信息。"""
+
+    isVip: Optional[int] = None
+    """是否会员；0-否，1-是。"""
+    lastDay: Optional[str] = None
+    """会员到期日。"""
+
+
+@dataclass
 class UserInfo:
     """个人资料详情。"""
 
@@ -20,6 +30,10 @@ class UserInfo:
     emailStatus: Optional[int] = None
     birthday: Optional[str] = None
     points: Optional[int] = None
+    vipInfo: Optional[VipInfo] = None
+    """会员信息。"""
+    verifyStatus: Optional[int] = None
+    """实名认证状态；0-未实名，1-已实名。"""
 
 
 @dataclass
@@ -41,4 +55,4 @@ class SendCount:
     mailSendCount: Optional[int] = None
 
 
-__all__ = ["UserInfo", "UserLimitTime", "SendCount"]
+__all__ = ["VipInfo", "UserInfo", "UserLimitTime", "SendCount"]

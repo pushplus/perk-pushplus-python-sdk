@@ -14,7 +14,7 @@ from .callback import (
 )
 from .open_access import AccessKeyResult
 from .open_message import MessageItem, SendMessageResult
-from .open_user import SendCount, UserInfo, UserLimitTime
+from .open_user import SendCount, UserInfo, UserLimitTime, VipInfo
 from .open_token import (
     MessageTokenAddRequest,
     MessageTokenEditRequest,
@@ -56,6 +56,7 @@ __all__ = [
     "MessageItem",
     "SendMessageResult",
     "UserInfo",
+    "VipInfo",
     "UserLimitTime",
     "SendCount",
     "MessageTokenItem",
