@@ -75,6 +75,24 @@ def test_send_uses_request_token_when_provided():
     assert payload["token"] == "explicit"
 
 
+def test_send_injects_token_and_keeps_push_id():
+    cfg = PushPlusConfig(token="user-token")
+    fake = FakeRequester([(200, _ok("sc-form"))])
+    api = MessageApi(cfg, fake)
+    api.send(
+        SendRequest.builder()
+        .title("表单通知")
+        .content("表单摘要")
+        .template(Template.FORM)
+        .push_id("ES6kgrgG")
+        .build()
+    )
+    payload = json.loads(fake.calls[0][3])
+    assert payload["token"] == "user-token"
+    assert payload["template"] == "form"
+    assert payload["pushId"] == "ES6kgrgG"
+
+
 def test_send_validates_content():
     api = MessageApi(PushPlusConfig(token="t"), FakeRequester([]))
     with pytest.raises(PushPlusError):

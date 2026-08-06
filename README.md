@@ -55,6 +55,16 @@ short_code = client.send(
     .callback_url("https://your.host/pushplus/callback")
     .build()
 )
+
+# push 表单：template=form 时需传 pushId（表单编码）
+short_code = client.send(
+    SendRequest.builder()
+    .title("表单通知")
+    .content("您有新的表单待填写")
+    .template(Template.FORM)
+    .push_id("表单编码")
+    .build()
+)
 ```
 
 ### 3. 多渠道发送

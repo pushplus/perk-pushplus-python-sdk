@@ -59,6 +59,8 @@ class Template(_StrCodeEnum):
     JENKINS = "jenkins"
     ROUTE = "route"
     PAY = "pay"
+    FORM = "form"
+    """表单格式模板；发送时需传 pushId（表单编码）。"""
 
     @property
     def code(self) -> str:

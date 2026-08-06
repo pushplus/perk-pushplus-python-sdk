@@ -25,6 +25,8 @@ class SendRequest:
     timestamp: Optional[int] = None
     to: Optional[str] = None
     pre: Optional[str] = None
+    # push 表单编码；template 为 form 时必传。
+    pushId: Optional[str] = None
 
     @staticmethod
     def builder() -> "SendRequestBuilder":
@@ -81,6 +83,10 @@ class SendRequestBuilder:
         self._req.pre = value
         return self
 
+    def push_id(self, value: Optional[str]) -> "SendRequestBuilder":
+        self._req.pushId = value
+        return self
+
     def build(self) -> SendRequest:
         return SendRequest(
             token=self._req.token,
@@ -94,6 +100,7 @@ class SendRequestBuilder:
             timestamp=self._req.timestamp,
             to=self._req.to,
             pre=self._req.pre,
+            pushId=self._req.pushId,
         )
 
 
@@ -116,6 +123,8 @@ class BatchSendRequest:
     timestamp: Optional[int] = None
     to: Optional[str] = None
     pre: Optional[str] = None
+    # push 表单编码；template 为 form 时必传。
+    pushId: Optional[str] = None
 
     @staticmethod
     def builder() -> "BatchSendRequestBuilder":
@@ -146,6 +155,7 @@ class BatchSendRequestBuilder:
         self.timestamp_value: Optional[int] = None
         self.to_value: Optional[str] = None
         self.pre_value: Optional[str] = None
+        self.push_id_value: Optional[str] = None
 
         self._channel_csv: Optional[str] = None
         self._option_csv: Optional[str] = None
@@ -186,6 +196,10 @@ class BatchSendRequestBuilder:
 
     def pre(self, value: Optional[str]) -> "BatchSendRequestBuilder":
         self.pre_value = value
+        return self
+
+    def push_id(self, value: Optional[str]) -> "BatchSendRequestBuilder":
+        self.push_id_value = value
         return self
 
     def channel(self, value: Channel) -> "BatchSendRequestBuilder":
@@ -233,6 +247,7 @@ class BatchSendRequestBuilder:
             timestamp=self.timestamp_value,
             to=self.to_value,
             pre=self.pre_value,
+            pushId=self.push_id_value,
         )
 
 

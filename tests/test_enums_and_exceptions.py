@@ -23,6 +23,7 @@ def test_template_codes():
     assert Template.HTML.value == "html"
     assert Template.MARKDOWN.code == "markdown"
     assert Template.CLOUD_MONITOR.value == "cloudMonitor"
+    assert Template.FORM.value == "form"
 
 
 def test_callback_event_message_complete_keep_typo():

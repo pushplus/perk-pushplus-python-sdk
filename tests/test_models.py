@@ -39,6 +39,35 @@ def test_send_request_builder_drops_none_on_serialize():
     }
 
 
+def test_send_request_form_template_serializes_push_id():
+    req = (
+        SendRequest.builder()
+        .title("表单通知")
+        .content("您有新的表单待填写")
+        .template(Template.FORM)
+        .push_id("ES6kgrgG")
+        .build()
+    )
+    payload = model_to_dict(req)
+    assert payload["template"] == "form"
+    assert payload["pushId"] == "ES6kgrgG"
+
+
+def test_batch_send_form_template_serializes_push_id():
+    req = (
+        BatchSendRequest.builder()
+        .content("表单摘要")
+        .template(Template.FORM)
+        .push_id("ES6kgrgG")
+        .channel(Channel.WECHAT)
+        .option("")
+        .build()
+    )
+    payload = model_to_dict(req)
+    assert payload["template"] == "form"
+    assert payload["pushId"] == "ES6kgrgG"
+
+
 def test_batch_send_builder_concats_channel_and_option():
     req = (
         BatchSendRequest.builder()

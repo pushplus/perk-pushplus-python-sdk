@@ -109,6 +109,7 @@ class MessageApi(AbstractApi):
             timestamp=request.timestamp,
             to=request.to,
             pre=request.pre,
+            pushId=request.pushId,
         )
 
     def _with_default_token_batch(self, request: BatchSendRequest) -> BatchSendRequest:
@@ -129,6 +130,7 @@ class MessageApi(AbstractApi):
             timestamp=request.timestamp,
             to=request.to,
             pre=request.pre,
+            pushId=request.pushId,
         )
 
     def _require_token(self) -> str:
