@@ -38,6 +38,18 @@ from .open_clawbot import ClawBotInfo, ClawBotMessage, ClawBotQrCode
 from .open_setting import UserDefaultDetail, UserDefaultItem, UserDefaultSaveRequest
 from .open_pre import PreDetail, PreItem, PreSaveRequest, PreTestRequest
 from .open_image import ImageItem, ImageUploadResult, ImageUploadToken
+from .open_form import (
+    FormCover,
+    FormDetail,
+    FormListItem,
+    FormListQuery,
+    FormPublishDiff,
+    FormPublishResult,
+    FormSaveRequest,
+    FormSettings,
+    FormTheme,
+)
+from .open_doc import DocContent, DocListItem, DocListQuery, DocVo, ExcelContent, ExcelVo
 
 __all__ = [
     "ApiResponse",
@@ -92,4 +104,19 @@ __all__ = [
     "ImageUploadToken",
     "ImageUploadResult",
     "ImageItem",
+    "FormListQuery",
+    "FormCover",
+    "FormTheme",
+    "FormSettings",
+    "FormListItem",
+    "FormSaveRequest",
+    "FormDetail",
+    "FormPublishDiff",
+    "FormPublishResult",
+    "DocListQuery",
+    "DocListItem",
+    "DocVo",
+    "DocContent",
+    "ExcelVo",
+    "ExcelContent",
 ]

@@ -28,7 +28,10 @@ from .enums import (
     CallbackEvent,
     Channel,
     ErrorCode,
+    FormStatus,
     SendStatus,
+    ShareLogin,
+    SharePerm,
     Template,
     WebhookType,
 )
@@ -45,6 +48,21 @@ from .models import (
     ClawBotMessage,
     ClawBotQrCode,
     CpItem,
+    DocContent,
+    DocListItem,
+    DocListQuery,
+    DocVo,
+    ExcelContent,
+    ExcelVo,
+    FormCover,
+    FormDetail,
+    FormListItem,
+    FormListQuery,
+    FormPublishDiff,
+    FormPublishResult,
+    FormSaveRequest,
+    FormSettings,
+    FormTheme,
     FriendItem,
     FriendQrCode,
     ImageItem,
@@ -88,7 +106,7 @@ from .models import (
 )
 from .rate_limit import RateLimitGuard
 
-__version__ = "1.1.1"
+__version__ = "1.2.0"
 
 __all__ = [
     "__version__",
@@ -110,6 +128,9 @@ __all__ = [
     "SendStatus",
     "WebhookType",
     "ErrorCode",
+    "FormStatus",
+    "SharePerm",
+    "ShareLogin",
     "ApiResponse",
     "PageQuery",
     "PageResult",
@@ -160,4 +181,19 @@ __all__ = [
     "ImageUploadToken",
     "ImageUploadResult",
     "ImageItem",
+    "FormListQuery",
+    "FormCover",
+    "FormTheme",
+    "FormSettings",
+    "FormListItem",
+    "FormSaveRequest",
+    "FormDetail",
+    "FormPublishDiff",
+    "FormPublishResult",
+    "DocListQuery",
+    "DocListItem",
+    "DocVo",
+    "DocContent",
+    "ExcelVo",
+    "ExcelContent",
 ]

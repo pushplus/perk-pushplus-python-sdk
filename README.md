@@ -3,7 +3,7 @@
 [pushplus(推送加)](https://www.pushplus.plus) 官方接口的 Python SDK，覆盖 **消息接口** 与 **全部开放接口**。
 
 - **消息接口**（`/send`、`/batchSend`）：单渠道 + 多渠道发送，含 Builder API。
-- **开放接口**（`/api/open/...`）：用户、消息、消息 token、群组、群组用户、好友、webhook、渠道、ClawBot、功能设置、预处理信息、图片服务。
+- **开放接口**（`/api/open/...` 与 `/push/api/open/...`）：用户、消息、消息 token、群组、群组用户、好友、webhook、渠道、ClawBot、功能设置、预处理信息、图片服务、push 表单、push 文档、push 表格。
 - **AccessKey 自动管理**：缓存 + 过期前自动刷新；`code=401` 自动刷新并重试一次。
 - **本地限流守卫**：命中 `code=900` 后按 token 短路同 token 后续发送，避免被服务端长期封禁。
 - **回调解析**：`message_complate`、`add_topic_user`、`add_friend` 三类回调统一解析。
@@ -12,6 +12,9 @@
 > 接口文档：
 > - 消息接口：<https://www.pushplus.plus/doc/guide/api.html>
 > - 开放接口：<https://www.pushplus.plus/doc/guide/openApi.html>
+> - push 表单：<https://www.pushplus.plus/doc/ecosystem/form/>
+> - push 文档：<https://www.pushplus.plus/doc/ecosystem/doc/>
+> - push 表格：<https://www.pushplus.plus/doc/ecosystem/sheet/>
 
 ## 安装
 
@@ -123,6 +126,28 @@ r = client.image.upload_file("/tmp/logo.png")
 print(r.url)  # 可访问的图片地址
 imgs = client.image.list(PageQuery.of(1, 10))
 client.image.delete(imgs.list[0].id)
+
+# push 表单
+from perk_pushplus import FormSaveRequest
+form = client.form.create("用户满意度调查")
+client.form.save(FormSaveRequest(
+    id=form.id,
+    title="用户满意度调查",
+    items=[{"id": "q_name", "type": "input", "label": "您的姓名", "required": True}],
+))
+published = client.form.publish(form.id)
+print(published.fillUrl)
+
+# push 文档
+doc = client.doc.create("本周工作同步")
+client.doc.save_content(doc.docCode, "<h1>本周工作同步</h1><p>需求评审。</p>")
+client.doc.update_share(doc.docCode, 1, 0)
+client.doc.publish(doc.docCode)
+
+# push 表格
+sheet = client.excel.create("销售日报")
+client.excel.write_cells(sheet.docCode, "A1", [["日期", "销售额"], ["2026-08-13", 12800]], "Sheet1")
+client.excel.publish(sheet.docCode)
 ```
 
 ### 图片服务

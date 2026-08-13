@@ -158,3 +158,61 @@ def test_open_message_detail_url():
     client = _build_client(req)
     url = client.open_message.detail_url("abc123")
     assert url.endswith("/shortMessage/abc123")
+
+
+def test_form_create_save_publish():
+    req = ScriptedRequester()
+    req.push("/push/api/open/form/create", 200, _ok({"id": 10001, "title": "用户满意度调查", "status": 0}))
+    req.push("/push/api/open/form/save", 200, _ok(None))
+    req.push(
+        "/push/api/open/form/publish",
+        200,
+        _ok({"id": 10001, "formCode": "a1b2c3d4", "fillUrl": "https://www.pushplus.plus/push/form/a1b2c3d4", "status": 1}),
+    )
+    client = _build_client(req)
+    created = client.form.create("用户满意度调查")
+    assert created.id == 10001
+    from perk_pushplus import FormSaveRequest
+
+    client.form.save(FormSaveRequest(id=10001, title="用户满意度调查", items=[{"id": "q1", "type": "input"}]))
+    published = client.form.publish(10001)
+    assert published.formCode == "a1b2c3d4"
+    assert any("/push/api/open/form/create" in c[1] for c in req.calls)
+    save_call = next(c for c in req.calls if "/push/api/open/form/save" in c[1])
+    assert save_call[2]["access-key"] == "ak-1"
+    assert "q1" in save_call[3]
+    publish_call = next(c for c in req.calls if "/push/api/open/form/publish" in c[1])
+    assert "id=10001" in publish_call[1]
+
+
+def test_doc_save_content_and_publish():
+    req = ScriptedRequester()
+    req.push("/push/api/open/doc/create", 200, _ok({"docCode": "Ab3xY7kP", "title": "本周工作同步"}))
+    req.push("/push/api/open/doc/saveContent", 200, _ok({"docCode": "Ab3xY7kP", "publishDirty": True}))
+    req.push("/push/api/open/doc/publish", 200, _ok({"docCode": "Ab3xY7kP", "published": True}))
+    client = _build_client(req)
+    doc = client.doc.create("本周工作同步")
+    client.doc.save_content(doc.docCode, "<p>hello</p>")
+    published = client.doc.publish(doc.docCode)
+    assert published.published is True
+    save_call = next(c for c in req.calls if "/push/api/open/doc/saveContent" in c[1])
+    assert "<p>hello</p>" in save_call[3]
+
+
+def test_excel_write_cells_and_save_object():
+    req = ScriptedRequester()
+    req.push("/push/api/open/excel/create", 200, _ok({"docCode": "Sh3xY7kP", "title": "销售日报"}))
+    req.push("/push/api/open/excel/writeCells", 200, _ok({"docCode": "Sh3xY7kP", "publishDirty": True}))
+    req.push("/push/api/open/excel/saveContent", 200, _ok({"docCode": "Sh3xY7kP", "publishDirty": True}))
+    client = _build_client(req)
+    sheet = client.excel.create("销售日报")
+    client.excel.write_cells(sheet.docCode, "A2", [["2026-08-13", 12800]], "Sheet1")
+    client.excel.save_content(sheet.docCode, {"sheetOrder": ["sheet-1"], "sheets": {}})
+    write_call = next(c for c in req.calls if "/push/api/open/excel/writeCells" in c[1])
+    body = json.loads(write_call[3])
+    assert body["range"] == "A2"
+    assert body["sheetName"] == "Sheet1"
+    save_call = next(c for c in req.calls if "/push/api/open/excel/saveContent" in c[1])
+    saved = json.loads(save_call[3])
+    assert isinstance(saved["content"], str)
+    assert json.loads(saved["content"])["sheetOrder"] == ["sheet-1"]

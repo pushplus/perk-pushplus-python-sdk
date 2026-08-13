@@ -210,6 +210,51 @@ class ErrorCode(_IntCodeEnum):
         return code is not None and int(code) == ErrorCode.RATE_LIMITED.value
 
 
+class FormStatus(_IntCodeEnum):
+    """push 表单状态。0-草稿，1-收集中，2-已停止。"""
+
+    DRAFT = 0
+    COLLECTING = 1
+    STOPPED = 2
+
+    @property
+    def code(self) -> int:
+        return self.value
+
+    @property
+    def description(self) -> str:
+        return _FORM_STATUS_DESCRIPTIONS[self]
+
+
+_FORM_STATUS_DESCRIPTIONS = {
+    FormStatus.DRAFT: "草稿",
+    FormStatus.COLLECTING: "收集中",
+    FormStatus.STOPPED: "已停止",
+}
+
+
+class SharePerm(_IntCodeEnum):
+    """push 文档 / 表格分享权限。0-关闭，1-开启（仅可查看）。"""
+
+    CLOSED = 0
+    VIEW = 1
+
+    @property
+    def code(self) -> int:
+        return self.value
+
+
+class ShareLogin(_IntCodeEnum):
+    """push 文档 / 表格打开分享页是否需要登录。0-免登录，1-需登录。"""
+
+    ANONYMOUS = 0
+    REQUIRED = 1
+
+    @property
+    def code(self) -> int:
+        return self.value
+
+
 __all__ = [
     "Channel",
     "Template",
@@ -217,4 +262,7 @@ __all__ = [
     "SendStatus",
     "WebhookType",
     "ErrorCode",
+    "FormStatus",
+    "SharePerm",
+    "ShareLogin",
 ]

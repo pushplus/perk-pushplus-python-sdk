@@ -20,6 +20,9 @@ from .api import (
     TopicUserApi,
     UserApi,
     WebhookApi,
+    FormApi,
+    DocApi,
+    ExcelApi,
 )
 from .config import PushPlusConfig
 from .exceptions import PushPlusError
@@ -76,6 +79,9 @@ class PushPlusClient:
         self.setting = SettingApi(config, self.http_requester, self.access_key_manager)
         self.pre = PreApi(config, self.http_requester, self.access_key_manager)
         self.image = ImageApi(config, self.http_requester, self.access_key_manager)
+        self.form = FormApi(config, self.http_requester, self.access_key_manager)
+        self.doc = DocApi(config, self.http_requester, self.access_key_manager)
+        self.excel = ExcelApi(config, self.http_requester, self.access_key_manager)
 
     @classmethod
     def of(cls, config: PushPlusConfig) -> "PushPlusClient":

@@ -5,6 +5,9 @@ from .channel import ChannelApi
 from .clawbot import ClawBotApi
 from .friend import FriendApi
 from .image import ImageApi
+from .form import FormApi
+from .doc import DocApi
+from .excel import ExcelApi
 from .message import MessageApi
 from .message_token import MessageTokenApi
 from .open_message import OpenMessageApi
@@ -32,4 +35,7 @@ __all__ = [
     "SettingApi",
     "PreApi",
     "ImageApi",
+    "FormApi",
+    "DocApi",
+    "ExcelApi",
 ]
