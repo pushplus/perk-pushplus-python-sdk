@@ -2,32 +2,31 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Optional
+from typing import Any, Dict, Optional
 
 
 @dataclass
 class DocListQuery:
-    """文档 / 表格分页查询。"""
+    """文档 / 表格分页查询。官方结构是 ``{current, pageSize, params:{keyword, shareEnabled}}``。"""
 
-    pageNum: Optional[int] = None
+    current: Optional[int] = None
     pageSize: Optional[int] = None
-    keyword: Optional[str] = None
-    shareEnabled: Optional[bool] = None
+    params: Optional[Dict[str, Any]] = None
 
     @classmethod
     def of(
         cls,
-        page_num: Optional[int] = 1,
-        page_size: Optional[int] = 10,
+        current: Optional[int] = 1,
+        page_size: Optional[int] = 20,
         keyword: Optional[str] = None,
         share_enabled: Optional[bool] = None,
     ) -> "DocListQuery":
-        return cls(
-            pageNum=page_num,
-            pageSize=page_size,
-            keyword=keyword,
-            shareEnabled=share_enabled,
-        )
+        params: Dict[str, Any] = {}
+        if keyword is not None:
+            params["keyword"] = keyword
+        if share_enabled is not None:
+            params["shareEnabled"] = share_enabled
+        return cls(current=current, pageSize=page_size, params=params or None)
 
 
 @dataclass

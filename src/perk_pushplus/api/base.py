@@ -7,7 +7,7 @@ from urllib.parse import quote
 
 from ..config import PushPlusConfig
 from ..exceptions import PushPlusError
-from ..http import HttpRequester, to_json
+from ..http import HttpRequester, call_execute_raw, to_json
 from ..models.base import ApiResponse, model_from_dict, model_to_dict
 
 if TYPE_CHECKING:
@@ -76,6 +76,25 @@ class AbstractApi:
         else:
             body_json = to_json(model_to_dict(body))
         resp = self.http.execute(method, url, headers, body_json)
+        if not resp.is_successful:
+            raise PushPlusError(
+                f"PushPlus 接口 HTTP 调用失败: status={resp.status_code}, body={resp.body}",
+                code=resp.status_code,
+            )
+        return self._parse_api_response(resp.body, data_type)
+
+    def execute_raw(
+        self,
+        method: str,
+        path: str,
+        headers: Optional[Dict[str, str]],
+        body: Optional[bytes],
+        data_type: Optional[Type[T]] = None,
+    ) -> ApiResponse[T]:
+        """执行带二进制请求体的请求并返回原始 :class:`ApiResponse`。"""
+
+        url = self.resolve_url(path)
+        resp = call_execute_raw(self.http, method, url, headers, body)
         if not resp.is_successful:
             raise PushPlusError(
                 f"PushPlus 接口 HTTP 调用失败: status={resp.status_code}, body={resp.body}",
@@ -195,6 +214,51 @@ class OpenAbstractApi(AbstractApi):
             self.access_key_manager.invalidate()
             retry_headers = self._headers_with_access_key()
             retry = self.execute(method, path, retry_headers, body, data_type)
+            if retry.is_success():
+                return retry.data
+            raise PushPlusError(
+                f"PushPlus 开放接口业务失败(重试后): code={retry.code}, msg={retry.msg}",
+                code=retry.code if retry.code is not None else -1,
+            )
+        raise PushPlusError(
+            f"PushPlus 开放接口业务失败: code={resp.code}, msg={resp.msg}",
+            code=resp.code if resp.code is not None else -1,
+        )
+
+    def execute_open_multipart(
+        self,
+        path: str,
+        content_type: str,
+        body: bytes,
+        data_type: Optional[Type[T]] = None,
+    ) -> Optional[T]:
+        """以 multipart 上传文件（自动携带 access-key；code=401 时刷新后重试一次）。"""
+
+        extra = {"Content-Type": content_type}
+        return self.execute_open_raw("POST", path, extra, body, data_type)
+
+    def execute_open_raw(
+        self,
+        method: str,
+        path: str,
+        extra_headers: Optional[Dict[str, str]],
+        body: Optional[bytes],
+        data_type: Optional[Type[T]] = None,
+    ) -> Optional[T]:
+        """执行带二进制 body 的开放接口请求；当返回 ``code=401`` 时自动刷新 key 并重试一次。"""
+
+        headers = self._headers_with_access_key()
+        if extra_headers:
+            headers.update(extra_headers)
+        resp = self.execute_raw(method, path, headers, body, data_type)
+        if resp.is_success():
+            return resp.data
+        if resp.code is not None and int(resp.code) == _CODE_ACCESS_KEY_INVALID:
+            self.access_key_manager.invalidate()
+            retry_headers = self._headers_with_access_key()
+            if extra_headers:
+                retry_headers.update(extra_headers)
+            retry = self.execute_raw(method, path, retry_headers, body, data_type)
             if retry.is_success():
                 return retry.data
             raise PushPlusError(

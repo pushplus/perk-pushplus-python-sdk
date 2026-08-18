@@ -1,4 +1,8 @@
-"""开放接口 - push 表单（文档：https://www.pushplus.plus/doc/ecosystem/form/）。"""
+"""开放接口 - push 表单（文档：https://www.pushplus.plus/doc/ecosystem/form/）。
+
+表单开放接口不单独提供推送接口。发布后请通过 :class:`~perk_pushplus.api.message.MessageApi`
+推送填写页：``template=form``，``pushId=formCode``。
+"""
 from __future__ import annotations
 
 from typing import Optional

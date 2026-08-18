@@ -122,6 +122,18 @@ class TopicUserItem:
 
 
 @dataclass
+class TopicUserBlacklistItem:
+    """群组订阅人黑名单列表项。"""
+
+    id: Optional[int] = None
+    userId: Optional[int] = None
+    nickName: Optional[str] = None
+    openId: Optional[str] = None
+    headImgUrl: Optional[str] = None
+    createTime: Optional[str] = None
+
+
+@dataclass
 class TopicAddRequest:
     """新增群组请求。"""
 
@@ -161,6 +173,7 @@ __all__ = [
     "TopicListQuery",
     "TopicUserListQuery",
     "TopicUserItem",
+    "TopicUserBlacklistItem",
     "TopicAddRequest",
     "TopicEditRequest",
 ]

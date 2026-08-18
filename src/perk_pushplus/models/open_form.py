@@ -7,23 +7,26 @@ from typing import Any, Dict, List, Optional
 
 @dataclass
 class FormListQuery:
-    """我的表单分页查询。"""
+    """我的表单分页查询。官方结构是 ``{current, pageSize, params:{keyword, status}}``。"""
 
-    pageNum: Optional[int] = None
+    current: Optional[int] = None
     pageSize: Optional[int] = None
-    keyword: Optional[str] = None
-    """表单状态：0草稿 / 1收集中 / 2已停止。"""
-    status: Optional[int] = None
+    params: Optional[Dict[str, Any]] = None
 
     @classmethod
     def of(
         cls,
-        page_num: Optional[int] = 1,
-        page_size: Optional[int] = 10,
+        current: Optional[int] = 1,
+        page_size: Optional[int] = 20,
         keyword: Optional[str] = None,
         status: Optional[int] = None,
     ) -> "FormListQuery":
-        return cls(pageNum=page_num, pageSize=page_size, keyword=keyword, status=status)
+        params: Dict[str, Any] = {}
+        if keyword is not None:
+            params["keyword"] = keyword
+        if status is not None:
+            params["status"] = status
+        return cls(current=current, pageSize=page_size, params=params or None)
 
 
 @dataclass

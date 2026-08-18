@@ -53,6 +53,16 @@ class ScriptedRequester:
             )
         return HttpResponse(status_code=status, body=payload)
 
+    def execute_raw(
+        self,
+        method: str,
+        url: str,
+        headers: Optional[Dict[str, str]],
+        body: Optional[bytes],
+    ) -> HttpResponse:
+        text = None if body is None else body.decode("utf-8", errors="replace")
+        return self.execute(method, url, headers, text)
+
 
 def _ok(data) -> str:
     return json.dumps({"code": 200, "msg": "ok", "data": data})
@@ -216,3 +226,69 @@ def test_excel_write_cells_and_save_object():
     saved = json.loads(save_call[3])
     assert isinstance(saved["content"], str)
     assert json.loads(saved["content"])["sheetOrder"] == ["sheet-1"]
+
+
+def test_friend_and_topic_user_blacklist():
+    req = ScriptedRequester()
+    req.push("/api/open/friend/addBlacklist", 200, _ok(None))
+    req.push(
+        "/api/open/friend/blacklistList",
+        200,
+        _ok({"pageNum": 1, "pageSize": 20, "total": 1, "pages": 1, "list": [{"id": 4, "friendId": 1322}]}),
+    )
+    req.push("/api/open/friend/removeBlacklist", 200, _ok(None))
+    req.push("/api/open/topicUser/addBlacklist", 200, _ok(None))
+    req.push(
+        "/api/open/topicUser/blacklistList",
+        200,
+        _ok({"pageNum": 1, "list": [{"id": 1, "userId": 1322}]}),
+    )
+    req.push("/api/open/topicUser/removeBlacklist", 200, _ok(None))
+    client = _build_client(req)
+    client.friend.add_blacklist(1322)
+    friends = client.friend.blacklist_list()
+    assert friends.list[0].friendId == 1322
+    client.friend.remove_blacklist(4)
+    from perk_pushplus import TopicUserListQuery
+
+    client.topic_user.add_blacklist(10)
+    users = client.topic_user.blacklist_list(TopicUserListQuery.of(1, 20, 100))
+    assert users.list[0].id == 1
+    client.topic_user.remove_blacklist(1)
+    assert any("friendId=1322" in c[1] for c in req.calls)
+    topic_list = next(c for c in req.calls if "/api/open/topicUser/blacklistList" in c[1])
+    assert json.loads(topic_list[3])["params"]["topicId"] == 100
+
+
+def test_form_list_uses_current_and_params():
+    req = ScriptedRequester()
+    req.push("/push/api/open/form/list", 200, _ok({"pageNum": 1, "pageSize": 20, "total": 0, "list": []}))
+    client = _build_client(req)
+    from perk_pushplus import FormListQuery
+
+    client.form.list(FormListQuery.of(1, 20, "满意度", 1))
+    list_call = next(c for c in req.calls if "/push/api/open/form/list" in c[1])
+    body = json.loads(list_call[3])
+    assert body["current"] == 1
+    assert body["params"]["keyword"] == "满意度"
+    assert body["params"]["status"] == 1
+
+
+def test_doc_import():
+    req = ScriptedRequester()
+    req.push("/push/api/open/doc/import", 200, _ok({"docCode": "Ab3xY7kP", "title": "本周工作同步"}))
+    client = _build_client(req)
+
+    imported = client.doc.import_word(b"hello", "本周工作同步.docx")
+    assert imported.docCode == "Ab3xY7kP"
+    import_call = next(c for c in req.calls if "/push/api/open/doc/import" in c[1])
+    assert import_call[2]["Content-Type"].startswith("multipart/form-data; boundary=")
+
+
+def test_excel_import():
+    req = ScriptedRequester()
+    req.push("/push/api/open/excel/import", 200, _ok({"docCode": "Sh3xY7kP", "title": "销售日报"}))
+    client = _build_client(req)
+
+    imported = client.excel.import_excel(b"xlsx", "销售日报.xlsx")
+    assert imported.docCode == "Sh3xY7kP"

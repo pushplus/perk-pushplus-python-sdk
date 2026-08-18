@@ -28,4 +28,15 @@ class FriendQrCode:
     qrCodeImgUrl: Optional[str] = None
 
 
-__all__ = ["FriendItem", "FriendQrCode"]
+@dataclass
+class FriendBlacklistItem:
+    """好友黑名单列表项。"""
+
+    id: Optional[int] = None
+    friendId: Optional[int] = None
+    nickName: Optional[str] = None
+    headImgUrl: Optional[str] = None
+    createTime: Optional[str] = None
+
+
+__all__ = ["FriendItem", "FriendQrCode", "FriendBlacklistItem"]

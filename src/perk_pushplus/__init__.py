@@ -65,6 +65,7 @@ from .models import (
     FormTheme,
     FriendItem,
     FriendQrCode,
+    FriendBlacklistItem,
     ImageItem,
     ImageUploadResult,
     ImageUploadToken,
@@ -95,6 +96,7 @@ from .models import (
     TopicUserInfo,
     TopicUserItem,
     TopicUserListQuery,
+    TopicUserBlacklistItem,
     UserDefaultDetail,
     UserDefaultItem,
     UserDefaultSaveRequest,
@@ -106,7 +108,7 @@ from .models import (
 )
 from .rate_limit import RateLimitGuard
 
-__version__ = "1.2.0"
+__version__ = "1.2.1"
 
 __all__ = [
     "__version__",
@@ -158,10 +160,12 @@ __all__ = [
     "TopicListQuery",
     "TopicUserListQuery",
     "TopicUserItem",
+    "TopicUserBlacklistItem",
     "TopicAddRequest",
     "TopicEditRequest",
     "FriendItem",
     "FriendQrCode",
+    "FriendBlacklistItem",
     "WebhookItem",
     "WebhookSaveRequest",
     "MpItem",

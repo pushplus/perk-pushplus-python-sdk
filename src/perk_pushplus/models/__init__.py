@@ -30,8 +30,9 @@ from .open_topic import (
     TopicQrCode,
     TopicUserItem,
     TopicUserListQuery,
+    TopicUserBlacklistItem,
 )
-from .open_friend import FriendItem, FriendQrCode
+from .open_friend import FriendBlacklistItem, FriendItem, FriendQrCode
 from .open_webhook import WebhookItem, WebhookSaveRequest
 from .open_channel import CpItem, MailDetail, MailItem, MpItem
 from .open_clawbot import ClawBotInfo, ClawBotMessage, ClawBotQrCode
@@ -81,10 +82,12 @@ __all__ = [
     "TopicListQuery",
     "TopicUserListQuery",
     "TopicUserItem",
+    "TopicUserBlacklistItem",
     "TopicAddRequest",
     "TopicEditRequest",
     "FriendItem",
     "FriendQrCode",
+    "FriendBlacklistItem",
     "WebhookItem",
     "WebhookSaveRequest",
     "MpItem",

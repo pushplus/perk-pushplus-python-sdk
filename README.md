@@ -59,13 +59,29 @@ short_code = client.send(
     .build()
 )
 
-# push 表单：template=form 时需传 pushId（表单编码）
+# push 表单 / 文档 / 表格：template 为 form/doc/excel 时需传 pushId（对应编码）
 short_code = client.send(
     SendRequest.builder()
     .title("表单通知")
     .content("您有新的表单待填写")
     .template(Template.FORM)
     .push_id("表单编码")
+    .build()
+)
+short_code = client.send(
+    SendRequest.builder()
+    .title("本周工作同步")
+    .content("请查收")
+    .template(Template.DOC)
+    .push_id("文档编码")
+    .build()
+)
+short_code = client.send(
+    SendRequest.builder()
+    .title("销售日报")
+    .content("请查收")
+    .template(Template.EXCEL)
+    .push_id("表格编码")
     .build()
 )
 ```
@@ -109,8 +125,13 @@ topics = client.topic.list(TopicListQuery.of(1, 20, topic_type=0))
 detail = client.topic.detail(topic_id=123)
 
 # 好友
+from perk_pushplus import PageQuery, TopicUserListQuery
 qr = client.friend.get_qr_code(content="welcome")
 friends = client.friend.list()
+client.friend.add_blacklist(friends.list[0].friendId)
+friend_blacklist = client.friend.blacklist_list(PageQuery.of(1, 20))
+client.topic_user.add_blacklist(topic_relation_id=10)
+topic_blacklist = client.topic_user.blacklist_list(TopicUserListQuery.of(1, 20, topic_id=1))
 
 # webhook 渠道
 webhooks = client.webhook.list()
@@ -137,17 +158,34 @@ client.form.save(FormSaveRequest(
 ))
 published = client.form.publish(form.id)
 print(published.fillUrl)
+client.send(SendRequest(
+    title=published.title,
+    content="请花1分钟完成填写",
+    template=Template.FORM,
+    pushId=published.formCode,
+))
 
 # push 文档
-doc = client.doc.create("本周工作同步")
-client.doc.save_content(doc.docCode, "<h1>本周工作同步</h1><p>需求评审。</p>")
+doc = client.doc.import_word("本周工作同步.docx")
 client.doc.update_share(doc.docCode, 1, 0)
 client.doc.publish(doc.docCode)
+client.send(SendRequest(
+    title=doc.title,
+    content="请查收",
+    template=Template.DOC,
+    pushId=doc.docCode,
+))
 
 # push 表格
-sheet = client.excel.create("销售日报")
+sheet = client.excel.import_excel("销售日报.xlsx")
 client.excel.write_cells(sheet.docCode, "A1", [["日期", "销售额"], ["2026-08-13", 12800]], "Sheet1")
 client.excel.publish(sheet.docCode)
+client.send(SendRequest(
+    title=sheet.title,
+    content="请查收",
+    template=Template.EXCEL,
+    pushId=sheet.docCode,
+))
 ```
 
 ### 图片服务

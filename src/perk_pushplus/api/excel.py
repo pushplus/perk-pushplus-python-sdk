@@ -1,10 +1,16 @@
-"""开放接口 - push 表格（文档：https://www.pushplus.plus/doc/ecosystem/sheet/）。"""
+"""开放接口 - push 表格（文档：https://www.pushplus.plus/doc/ecosystem/sheet/）。
+
+表格开放接口不单独提供推送接口。发布后请通过 :class:`~perk_pushplus.api.message.MessageApi`
+推送分享页：``template=excel``，``pushId=docCode``。
+"""
 from __future__ import annotations
 
 import json
-from typing import Any, Optional, Sequence
+from pathlib import Path
+from typing import Any, Optional, Sequence, Union
 
 from ..models import DocListItem, DocListQuery, ExcelContent, ExcelVo, PageResult
+from ..multipart import build_file_multipart
 from .base import OpenAbstractApi
 
 
@@ -23,6 +29,20 @@ class ExcelApi(OpenAbstractApi):
 
         return self.execute_open(
             "POST", "/push/api/open/excel/create", {"title": title}, ExcelVo
+        )
+
+    def import_excel(
+        self, file: Union[str, Path, bytes], file_name: Optional[str] = None
+    ) -> ExcelVo:
+        """导入 Excel（``.xlsx`` / ``.xls``）创建表格。
+
+        标题默认取文件名；创建后默认关闭分享，需再调用 :meth:`publish` 才会同步到分享页。
+        """
+
+        data, name = _read_upload_file(file, file_name, "workbook.xlsx")
+        content_type, body = build_file_multipart(name, _guess_excel_content_type(name), data)
+        return self.execute_open_multipart(
+            "/push/api/open/excel/import", content_type, body, ExcelVo
         )
 
     def content(self, doc_code: str) -> ExcelContent:
@@ -91,6 +111,27 @@ def _as_json_string(content: Any) -> str:
     if isinstance(content, str):
         return content
     return json.dumps(content, ensure_ascii=False)
+
+
+def _read_upload_file(
+    file: Union[str, Path, bytes], file_name: Optional[str], default_name: str
+) -> tuple:
+    if isinstance(file, bytes):
+        name = file_name or default_name
+        return file, name
+    path = Path(file)
+    data = path.read_bytes()
+    name = file_name or path.name or default_name
+    return data, name
+
+
+def _guess_excel_content_type(name: str) -> str:
+    lower = name.lower()
+    if lower.endswith(".xlsx"):
+        return "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    if lower.endswith(".xls"):
+        return "application/vnd.ms-excel"
+    return "application/octet-stream"
 
 
 __all__ = ["ExcelApi"]

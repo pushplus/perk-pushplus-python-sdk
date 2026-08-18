@@ -1,9 +1,15 @@
-"""开放接口 - push 文档（文档：https://www.pushplus.plus/doc/ecosystem/doc/）。"""
+"""开放接口 - push 文档（文档：https://www.pushplus.plus/doc/ecosystem/doc/）。
+
+文档开放接口不单独提供推送接口。发布后请通过 :class:`~perk_pushplus.api.message.MessageApi`
+推送分享页：``template=doc``，``pushId=docCode``。
+"""
 from __future__ import annotations
 
-from typing import Optional
+from pathlib import Path
+from typing import Optional, Union
 
 from ..models import DocContent, DocListItem, DocListQuery, DocVo, PageResult
+from ..multipart import build_file_multipart
 from .base import OpenAbstractApi
 
 
@@ -21,6 +27,17 @@ class DocApi(OpenAbstractApi):
         """创建空白文档。"""
 
         return self.execute_open("POST", "/push/api/open/doc/create", {"title": title}, DocVo)
+
+    def import_word(self, file: Union[str, Path, bytes], file_name: Optional[str] = None) -> DocVo:
+        """导入 Word（``.docx``）创建文档。
+
+        标题默认取文件名；创建后默认关闭分享，需再调用 :meth:`publish` 才会同步到分享页。
+        ``file`` 可为路径或文件字节。
+        """
+
+        data, name = _read_upload_file(file, file_name, "document.docx")
+        content_type, body = build_file_multipart(name, _guess_docx_content_type(name), data)
+        return self.execute_open_multipart("/push/api/open/doc/import", content_type, body, DocVo)
 
     def content(self, doc_code: str) -> DocContent:
         """获取文档元信息与 HTML 草稿正文。"""
@@ -65,6 +82,24 @@ class DocApi(OpenAbstractApi):
         if share_login is not None:
             body["shareLogin"] = int(share_login)
         return self.execute_open("POST", "/push/api/open/doc/updateShare", body, DocVo)
+
+
+def _read_upload_file(
+    file: Union[str, Path, bytes], file_name: Optional[str], default_name: str
+) -> tuple:
+    if isinstance(file, bytes):
+        name = file_name or default_name
+        return file, name
+    path = Path(file)
+    data = path.read_bytes()
+    name = file_name or path.name or default_name
+    return data, name
+
+
+def _guess_docx_content_type(name: str) -> str:
+    if name.lower().endswith(".docx"):
+        return "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    return "application/octet-stream"
 
 
 __all__ = ["DocApi"]
