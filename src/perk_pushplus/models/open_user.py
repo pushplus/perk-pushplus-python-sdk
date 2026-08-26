@@ -53,6 +53,7 @@ class SendCount:
     cpSendCount: Optional[int] = None
     webhookSendCount: Optional[int] = None
     mailSendCount: Optional[int] = None
+    qqBotSendCount: Optional[int] = None
 
 
 __all__ = ["VipInfo", "UserInfo", "UserLimitTime", "SendCount"]

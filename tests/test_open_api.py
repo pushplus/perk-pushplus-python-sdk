@@ -292,3 +292,57 @@ def test_excel_import():
 
     imported = client.excel.import_excel(b"xlsx", "销售日报.xlsx")
     assert imported.docCode == "Sh3xY7kP"
+
+
+def test_qq_bot_bind_and_group_config():
+    req = ScriptedRequester()
+    req.push(
+        "/api/open/qqBot/getBindLink",
+        200,
+        _ok({"url": "https://qun.qq.com/qunpro/robot/share?robot_appid=1", "bindCode": "A1B2C3", "expireSeconds": 300}),
+    )
+    req.push(
+        "/api/open/qqBot/botInfo",
+        200,
+        _ok({"isBind": 1, "receiveStatus": 1, "botInfo": {"appId": "1", "username": "pushplus"}}),
+    )
+    req.push(
+        "/api/open/qqBot/groupList",
+        200,
+        _ok([{"id": 9, "groupOpenId": "OPEN-1", "status": 1, "groupName": "运维告警群", "groupTags": ["运维"]}]),
+    )
+    req.push("/api/open/qqBot/add", 200, _ok(None))
+    req.push(
+        "/api/open/qqBot/list",
+        200,
+        _ok({"pageNum": 1, "pageSize": 20, "total": 1, "pages": 1, "list": [{"id": 3, "qqCode": "ops-group", "sendType": 2, "qqGroupId": 9}]}),
+    )
+    req.push("/api/open/qqBot/delete", 200, _ok(None))
+    client = _build_client(req)
+
+    from perk_pushplus import QqBotSaveRequest
+
+    link = client.qq_bot.get_bind_link(refresh=True)
+    assert link.bindCode == "A1B2C3"
+    assert "refresh=true" in next(c for c in req.calls if "getBindLink" in c[1])[1]
+
+    bind = client.qq_bot.bot_info()
+    assert bind.isBind == 1
+    assert bind.botInfo is not None and bind.botInfo.username == "pushplus"
+
+    groups = client.qq_bot.group_list()
+    assert groups[0].id == 9
+    assert groups[0].groupTags == ["运维"]
+
+    client.qq_bot.add(QqBotSaveRequest(qqName="运维告警群", qqCode="ops-group", qqGroupId=9))
+    add_call = next(c for c in req.calls if "/api/open/qqBot/add" in c[1])
+    assert add_call[2]["access-key"] == "ak-1"
+    assert json.loads(add_call[3])["sendType"] == 2
+
+    page = client.qq_bot.list()
+    assert page.list[0].qqCode == "ops-group"
+
+    client.qq_bot.delete(3)
+    delete_call = next(c for c in req.calls if "/api/open/qqBot/delete" in c[1])
+    assert delete_call[0] == "DELETE"
+    assert "id=3" in delete_call[1]

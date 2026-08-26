@@ -84,6 +84,12 @@ from .models import (
     PreItem,
     PreSaveRequest,
     PreTestRequest,
+    QqBotBindInfo,
+    QqBotBindLink,
+    QqBotInfo,
+    QqBotItem,
+    QqBotSaveRequest,
+    QqGroupItem,
     SendCount,
     SendMessageResult,
     SendRequest,
@@ -108,7 +114,7 @@ from .models import (
 )
 from .rate_limit import RateLimitGuard
 
-__version__ = "1.2.1"
+__version__ = "1.2.2"
 
 __all__ = [
     "__version__",
@@ -175,6 +181,12 @@ __all__ = [
     "ClawBotQrCode",
     "ClawBotInfo",
     "ClawBotMessage",
+    "QqBotBindLink",
+    "QqBotInfo",
+    "QqBotBindInfo",
+    "QqGroupItem",
+    "QqBotItem",
+    "QqBotSaveRequest",
     "UserDefaultItem",
     "UserDefaultDetail",
     "UserDefaultSaveRequest",

@@ -15,6 +15,7 @@ from .api import (
     MessageTokenApi,
     OpenMessageApi,
     PreApi,
+    QqBotApi,
     SettingApi,
     TopicApi,
     TopicUserApi,
@@ -76,6 +77,7 @@ class PushPlusClient:
         self.webhook = WebhookApi(config, self.http_requester, self.access_key_manager)
         self.channel = ChannelApi(config, self.http_requester, self.access_key_manager)
         self.claw_bot = ClawBotApi(config, self.http_requester, self.access_key_manager)
+        self.qq_bot = QqBotApi(config, self.http_requester, self.access_key_manager)
         self.setting = SettingApi(config, self.http_requester, self.access_key_manager)
         self.pre = PreApi(config, self.http_requester, self.access_key_manager)
         self.image = ImageApi(config, self.http_requester, self.access_key_manager)

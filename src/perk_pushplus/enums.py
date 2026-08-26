@@ -42,6 +42,8 @@ class Channel(_StrCodeEnum):
     """App 渠道（安卓/鸿蒙/iOS）。"""
     CLAWBOT = "clawbot"
     """微信 ClawBot。"""
+    QQ = "qq"
+    """QQ 机器人；不带 option 发给自己，option 填配置编码则发到对应 QQ 群。"""
 
     @property
     def code(self) -> str:

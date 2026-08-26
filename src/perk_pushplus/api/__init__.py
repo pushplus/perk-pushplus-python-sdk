@@ -12,6 +12,7 @@ from .message import MessageApi
 from .message_token import MessageTokenApi
 from .open_message import OpenMessageApi
 from .pre import PreApi
+from .qqbot import QqBotApi
 from .setting import SettingApi
 from .topic import TopicApi
 from .topic_user import TopicUserApi
@@ -32,6 +33,7 @@ __all__ = [
     "WebhookApi",
     "ChannelApi",
     "ClawBotApi",
+    "QqBotApi",
     "SettingApi",
     "PreApi",
     "ImageApi",

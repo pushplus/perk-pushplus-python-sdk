@@ -36,6 +36,14 @@ from .open_friend import FriendBlacklistItem, FriendItem, FriendQrCode
 from .open_webhook import WebhookItem, WebhookSaveRequest
 from .open_channel import CpItem, MailDetail, MailItem, MpItem
 from .open_clawbot import ClawBotInfo, ClawBotMessage, ClawBotQrCode
+from .open_qqbot import (
+    QqBotBindInfo,
+    QqBotBindLink,
+    QqBotInfo,
+    QqBotItem,
+    QqBotSaveRequest,
+    QqGroupItem,
+)
 from .open_setting import UserDefaultDetail, UserDefaultItem, UserDefaultSaveRequest
 from .open_pre import PreDetail, PreItem, PreSaveRequest, PreTestRequest
 from .open_image import ImageItem, ImageUploadResult, ImageUploadToken
@@ -97,6 +105,12 @@ __all__ = [
     "ClawBotQrCode",
     "ClawBotInfo",
     "ClawBotMessage",
+    "QqBotBindLink",
+    "QqBotInfo",
+    "QqBotBindInfo",
+    "QqGroupItem",
+    "QqBotItem",
+    "QqBotSaveRequest",
     "UserDefaultItem",
     "UserDefaultDetail",
     "UserDefaultSaveRequest",
