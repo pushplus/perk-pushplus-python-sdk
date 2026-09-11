@@ -24,6 +24,8 @@ from .api import (
     FormApi,
     DocApi,
     ExcelApi,
+    ForwardLogApi,
+    ForwardRuleApi,
 )
 from .config import PushPlusConfig
 from .exceptions import PushPlusError
@@ -84,6 +86,8 @@ class PushPlusClient:
         self.form = FormApi(config, self.http_requester, self.access_key_manager)
         self.doc = DocApi(config, self.http_requester, self.access_key_manager)
         self.excel = ExcelApi(config, self.http_requester, self.access_key_manager)
+        self.forward_rule = ForwardRuleApi(config, self.http_requester, self.access_key_manager)
+        self.forward_log = ForwardLogApi(config, self.http_requester, self.access_key_manager)
 
     @classmethod
     def of(cls, config: PushPlusConfig) -> "PushPlusClient":

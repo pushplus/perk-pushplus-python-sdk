@@ -5,6 +5,9 @@ from perk_pushplus import (
     CallbackEvent,
     Channel,
     ErrorCode,
+    ForwardConditionOperator,
+    ForwardMatchResult,
+    ForwardMode,
     PushPlusError,
     SendStatus,
     Template,
@@ -47,6 +50,13 @@ def test_error_code_rate_limited():
     assert ErrorCode.is_rate_limited(200) is False
     assert ErrorCode.from_code(900) is ErrorCode.RATE_LIMITED
     assert ErrorCode.from_code(None) is ErrorCode.UNKNOWN
+
+
+def test_forward_mode_and_match_result():
+    assert ForwardMode.ON_FALLBACK.code == 1
+    assert ForwardMode.ON_STRICT.description == "开启，未命中时不推送"
+    assert ForwardMatchResult.FORWARDED.description == "已转发"
+    assert ForwardConditionOperator.NOT_CONTAINS.value == "notContains"
 
 
 def test_pushplus_error_exposes_metadata():

@@ -59,6 +59,21 @@ from .open_form import (
     FormTheme,
 )
 from .open_doc import DocContent, DocListItem, DocListQuery, DocVo, ExcelContent, ExcelVo
+from .open_forward import (
+    ForwardCondition,
+    ForwardConditionItem,
+    ForwardLogDetail,
+    ForwardLogItem,
+    ForwardLogListQuery,
+    ForwardRuleDetail,
+    ForwardRuleItem,
+    ForwardRuleSaveRequest,
+    ForwardRuleSetting,
+    ForwardRuleTestRequest,
+    ForwardRuleTestResult,
+    ForwardTarget,
+    ForwardVariable,
+)
 
 __all__ = [
     "ApiResponse",
@@ -136,4 +151,17 @@ __all__ = [
     "DocContent",
     "ExcelVo",
     "ExcelContent",
+    "ForwardConditionItem",
+    "ForwardCondition",
+    "ForwardVariable",
+    "ForwardTarget",
+    "ForwardRuleItem",
+    "ForwardRuleDetail",
+    "ForwardRuleSaveRequest",
+    "ForwardRuleTestRequest",
+    "ForwardRuleTestResult",
+    "ForwardRuleSetting",
+    "ForwardLogListQuery",
+    "ForwardLogItem",
+    "ForwardLogDetail",
 ]

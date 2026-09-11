@@ -3,7 +3,7 @@
 [pushplus(推送加)](https://www.pushplus.plus) 官方接口的 Python SDK，覆盖 **消息接口** 与 **全部开放接口**。
 
 - **消息接口**（`/send`、`/batchSend`）：单渠道 + 多渠道发送，含 Builder API。
-- **开放接口**（`/api/open/...` 与 `/push/api/open/...`）：用户、消息、消息 token、群组、群组用户、好友、webhook、渠道、ClawBot、QQ 机器人、功能设置、预处理信息、图片服务、push 表单、push 文档、push 表格。
+- **开放接口**（`/api/open/...` 与 `/push/api/open/...`）：用户、消息、消息 token、群组、群组用户、好友、webhook、渠道、ClawBot、QQ 机器人、功能设置、预处理信息、图片服务、push 表单、push 文档、push 表格、消息规则。
 - **AccessKey 自动管理**：缓存 + 过期前自动刷新；`code=401` 自动刷新并重试一次。
 - **本地限流守卫**：命中 `code=900` 后按 token 短路同 token 后续发送，避免被服务端长期封禁。
 - **回调解析**：`message_complate`、`add_topic_user`、`add_friend` 三类回调统一解析。
@@ -155,6 +155,19 @@ client.setting.change_is_send(1)  # 启用发送
 
 # 预处理（会员）
 client.pre.test(...)
+
+# 消息规则（会员）
+from perk_pushplus import ForwardLogListQuery, ForwardRuleSaveRequest, ForwardVariable
+client.forward_rule.save_setting(1)  # 开启，未命中时仍按默认方式推送
+client.forward_rule.add(ForwardRuleSaveRequest(
+    ruleName="阿里云监控多渠道",
+    tokenId=-1,
+    sourceType=1,
+    titleTemplate="{{alertName}}",
+    variables=[ForwardVariable(varName="alertName", sourceType=3, extractType=1, extractKey="alertName")],
+))
+rules = client.forward_rule.list()
+logs = client.forward_log.list(ForwardLogListQuery.of(1, 20, match_result=1))
 
 # 图片服务（一行上传到 PushPlus 图床）
 r = client.image.upload_file("/tmp/logo.png")

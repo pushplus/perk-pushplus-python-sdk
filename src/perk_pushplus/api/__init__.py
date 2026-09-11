@@ -8,6 +8,8 @@ from .image import ImageApi
 from .form import FormApi
 from .doc import DocApi
 from .excel import ExcelApi
+from .forward_log import ForwardLogApi
+from .forward_rule import ForwardRuleApi
 from .message import MessageApi
 from .message_token import MessageTokenApi
 from .open_message import OpenMessageApi
@@ -40,4 +42,6 @@ __all__ = [
     "FormApi",
     "DocApi",
     "ExcelApi",
+    "ForwardRuleApi",
+    "ForwardLogApi",
 ]

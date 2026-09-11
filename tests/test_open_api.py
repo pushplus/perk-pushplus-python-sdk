@@ -260,6 +260,70 @@ def test_friend_and_topic_user_blacklist():
     assert json.loads(topic_list[3])["params"]["topicId"] == 100
 
 
+def test_forward_rule_and_log():
+    req = ScriptedRequester()
+    req.push(
+        "/api/open/forwardRule/list",
+        200,
+        _ok({"pageNum": 1, "list": [{"id": 1, "ruleName": "阿里云监控多渠道", "sourceType": 1}]}),
+    )
+    req.push("/api/open/forwardRule/add", 200, _ok(None))
+    req.push(
+        "/api/open/forwardRule/test",
+        200,
+        _ok({"matched": True, "title": "ECS-内存使用率", "conditionExpr": "alertState == 'ALERT'"}),
+    )
+    req.push("/api/open/forwardRule/setting?mode=1", 200, _ok(None))
+    req.push("/api/open/forwardRule/setting", 200, _ok({"mode": 1}))
+    req.push(
+        "/api/open/forwardLog/list",
+        200,
+        _ok({"pageNum": 1, "list": [{"id": 9, "ruleId": 1, "matchResult": 1}]}),
+    )
+    req.push(
+        "/api/open/forwardLog/detail",
+        200,
+        _ok({"id": 9, "ruleId": 1, "requestBody": '{"alertState":"ALERT"}'}),
+    )
+    client = _build_client(req)
+
+    from perk_pushplus import (
+        ForwardLogListQuery,
+        ForwardRuleSaveRequest,
+        ForwardRuleTestRequest,
+        ForwardVariable,
+    )
+
+    page = client.forward_rule.list()
+    assert page.list[0].ruleName == "阿里云监控多渠道"
+    client.forward_rule.add(
+        ForwardRuleSaveRequest(
+            ruleName="阿里云监控多渠道",
+            tokenId=-1,
+            sourceType=1,
+            variables=[ForwardVariable(varName="alertState", sourceType=3, extractType=1, extractKey="alertState")],
+        )
+    )
+    tested = client.forward_rule.test(
+        ForwardRuleTestRequest(sourceType=1, body='{"alertState":"ALERT"}', conditionExpr="alertState == 'ALERT'")
+    )
+    assert tested.matched is True
+    client.forward_rule.save_setting(1)
+    setting = client.forward_rule.get_setting()
+    assert setting.mode == 1
+    logs = client.forward_log.list(ForwardLogListQuery.of(1, 20, rule_id=1, match_result=1))
+    assert logs.list[0].id == 9
+    detail = client.forward_log.detail(9)
+    assert "ALERT" in detail.requestBody
+
+    add_call = next(c for c in req.calls if "/api/open/forwardRule/add" in c[1])
+    assert json.loads(add_call[3])["tokenId"] == -1
+    assert any("setting?mode=1" in c[1] for c in req.calls)
+    log_list = next(c for c in req.calls if "/api/open/forwardLog/list" in c[1])
+    assert json.loads(log_list[3])["params"]["matchResult"] == 1
+    assert any("logId=9" in c[1] for c in req.calls)
+
+
 def test_form_list_uses_current_and_params():
     req = ScriptedRequester()
     req.push("/push/api/open/form/list", 200, _ok({"pageNum": 1, "pageSize": 20, "total": 0, "list": []}))

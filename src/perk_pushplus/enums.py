@@ -257,6 +257,142 @@ class ShareLogin(_IntCodeEnum):
         return self.value
 
 
+class ForwardMode(_IntCodeEnum):
+    """消息规则总开关。0-关闭，1-开启且未命中仍推送，2-开启且未命中不推送。"""
+
+    OFF = 0
+    ON_FALLBACK = 1
+    ON_STRICT = 2
+
+    @property
+    def code(self) -> int:
+        return self.value
+
+    @property
+    def description(self) -> str:
+        return _FORWARD_MODE_DESCRIPTIONS[self]
+
+
+_FORWARD_MODE_DESCRIPTIONS = {
+    ForwardMode.OFF: "关闭（推送与原来一致）",
+    ForwardMode.ON_FALLBACK: "开启，未命中时仍按默认方式推送",
+    ForwardMode.ON_STRICT: "开启，未命中时不推送",
+}
+
+
+class ForwardSourceType(_IntCodeEnum):
+    """消息规则触发来源。0-全部，1-消息接口，2-邮件。"""
+
+    ALL = 0
+    API = 1
+    MAIL = 2
+
+    @property
+    def code(self) -> int:
+        return self.value
+
+    @property
+    def description(self) -> str:
+        return _FORWARD_SOURCE_TYPE_DESCRIPTIONS[self]
+
+
+_FORWARD_SOURCE_TYPE_DESCRIPTIONS = {
+    ForwardSourceType.ALL: "全部",
+    ForwardSourceType.API: "消息接口",
+    ForwardSourceType.MAIL: "邮件",
+}
+
+
+class ForwardVarSourceType(_IntCodeEnum):
+    """模板变量来源。1-请求头，2-Query参数，3-请求体，4-URL路径，5-主题（邮件）。"""
+
+    HEADER = 1
+    QUERY = 2
+    BODY = 3
+    PATH = 4
+    SUBJECT = 5
+
+    @property
+    def code(self) -> int:
+        return self.value
+
+
+class ForwardExtractType(_IntCodeEnum):
+    """模板变量提取方式。1-序列化数据，2-正则表达式，3-JSONPath，4-原始全文。"""
+
+    SERIALIZED = 1
+    REGEX = 2
+    JSON_PATH = 3
+    RAW = 4
+
+    @property
+    def code(self) -> int:
+        return self.value
+
+
+class ForwardMatchResult(_IntCodeEnum):
+    """触发记录匹配结果。0-条件不满足，1-已转发，2-频率限制，3-不在触发时间段，4-执行异常。"""
+
+    NOT_MATCHED = 0
+    FORWARDED = 1
+    RATE_LIMITED = 2
+    OUT_OF_TIME = 3
+    ERROR = 4
+
+    @property
+    def code(self) -> int:
+        return self.value
+
+    @property
+    def description(self) -> str:
+        return _FORWARD_MATCH_RESULT_DESCRIPTIONS[self]
+
+
+_FORWARD_MATCH_RESULT_DESCRIPTIONS = {
+    ForwardMatchResult.NOT_MATCHED: "条件不满足",
+    ForwardMatchResult.FORWARDED: "已转发",
+    ForwardMatchResult.RATE_LIMITED: "频率限制",
+    ForwardMatchResult.OUT_OF_TIME: "不在触发时间段",
+    ForwardMatchResult.ERROR: "执行异常",
+}
+
+
+class ForwardConditionOperator(_StrCodeEnum):
+    """图形化触发条件运算符。"""
+
+    EQ = "eq"
+    NE = "ne"
+    CONTAINS = "contains"
+    NOT_CONTAINS = "notContains"
+    STARTS_WITH = "startsWith"
+    ENDS_WITH = "endsWith"
+    REGEX = "regex"
+    GT = "gt"
+    GTE = "gte"
+    LT = "lt"
+    LTE = "lte"
+    IN = "in"
+    NOT_IN = "notIn"
+    EMPTY = "empty"
+    NOT_EMPTY = "notEmpty"
+
+    @property
+    def code(self) -> str:
+        return self.value
+
+
+class ForwardMessageType(_StrCodeEnum):
+    """消息规则发送目标的消息类型。也支持写成 ``{{变量名}}``。"""
+
+    ONE = "one"
+    TOPIC = "topic"
+    FRIEND = "friend"
+
+    @property
+    def code(self) -> str:
+        return self.value
+
+
 __all__ = [
     "Channel",
     "Template",
@@ -267,4 +403,11 @@ __all__ = [
     "FormStatus",
     "SharePerm",
     "ShareLogin",
+    "ForwardMode",
+    "ForwardSourceType",
+    "ForwardVarSourceType",
+    "ForwardExtractType",
+    "ForwardMatchResult",
+    "ForwardConditionOperator",
+    "ForwardMessageType",
 ]
