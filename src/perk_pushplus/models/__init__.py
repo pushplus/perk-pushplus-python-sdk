@@ -36,6 +36,7 @@ from .open_friend import FriendBlacklistItem, FriendItem, FriendQrCode
 from .open_webhook import WebhookItem, WebhookSaveRequest
 from .open_channel import CpItem, MailDetail, MailItem, MpItem
 from .open_clawbot import ClawBotInfo, ClawBotMessage, ClawBotQrCode
+from .open_cmcc import CmccBindRequest, CmccInfo
 from .open_qqbot import (
     QqBotBindInfo,
     QqBotBindLink,
@@ -120,6 +121,8 @@ __all__ = [
     "ClawBotQrCode",
     "ClawBotInfo",
     "ClawBotMessage",
+    "CmccBindRequest",
+    "CmccInfo",
     "QqBotBindLink",
     "QqBotInfo",
     "QqBotBindInfo",

@@ -358,6 +358,34 @@ def test_excel_import():
     assert imported.docCode == "Sh3xY7kP"
 
 
+def test_cmcc_bind_and_status():
+    req = ScriptedRequester()
+    req.push("/api/open/cmcc/bind", 200, _ok(None))
+    req.push(
+        "/api/open/cmcc/info",
+        200,
+        _ok({"bound": 1, "apiKeyMasked": "ak_***xxx", "createTime": "2026-09-14 10:20:00"}),
+    )
+    req.push("/api/open/cmcc/test", 200, _ok(None))
+    req.push("/api/open/cmcc/unbind", 200, _ok(None))
+    client = _build_client(req)
+
+    client.cmcc.bind("ak_xxxxxxxxxxxxxxxx")
+    bind_call = next(c for c in req.calls if "/api/open/cmcc/bind" in c[1])
+    assert bind_call[2]["access-key"] == "ak-1"
+    assert json.loads(bind_call[3])["apiKey"] == "ak_xxxxxxxxxxxxxxxx"
+
+    info = client.cmcc.info()
+    assert info.bound == 1
+    assert info.apiKeyMasked == "ak_***xxx"
+
+    client.cmcc.send_test()
+    assert any("/api/open/cmcc/test" in c[1] for c in req.calls)
+
+    client.cmcc.unbind()
+    assert any("/api/open/cmcc/unbind" in c[1] for c in req.calls)
+
+
 def test_qq_bot_bind_and_group_config():
     req = ScriptedRequester()
     req.push(

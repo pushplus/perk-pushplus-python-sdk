@@ -54,6 +54,8 @@ from .models import (
     ClawBotInfo,
     ClawBotMessage,
     ClawBotQrCode,
+    CmccBindRequest,
+    CmccInfo,
     CpItem,
     DocContent,
     DocListItem,
@@ -134,7 +136,7 @@ from .models import (
 )
 from .rate_limit import RateLimitGuard
 
-__version__ = "1.2.3"
+__version__ = "1.2.4"
 
 __all__ = [
     "__version__",
@@ -208,6 +210,8 @@ __all__ = [
     "ClawBotQrCode",
     "ClawBotInfo",
     "ClawBotMessage",
+    "CmccBindRequest",
+    "CmccInfo",
     "QqBotBindLink",
     "QqBotInfo",
     "QqBotBindInfo",

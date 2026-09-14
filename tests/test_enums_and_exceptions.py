@@ -18,6 +18,7 @@ from perk_pushplus import (
 def test_channel_of_case_insensitive():
     assert Channel.of("WeChat") is Channel.WECHAT
     assert Channel.of("clawbot") is Channel.CLAWBOT
+    assert Channel.of("cmcc") is Channel.CMCC
     assert Channel.of(None) is None
     assert Channel.of("not-exist") is None
 

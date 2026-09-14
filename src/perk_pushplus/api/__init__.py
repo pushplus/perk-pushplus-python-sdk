@@ -3,6 +3,7 @@ from .access_key import AccessKeyApi
 from .base import AbstractApi, OpenAbstractApi
 from .channel import ChannelApi
 from .clawbot import ClawBotApi
+from .cmcc import CmccApi
 from .friend import FriendApi
 from .image import ImageApi
 from .form import FormApi
@@ -35,6 +36,7 @@ __all__ = [
     "WebhookApi",
     "ChannelApi",
     "ClawBotApi",
+    "CmccApi",
     "QqBotApi",
     "SettingApi",
     "PreApi",

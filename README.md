@@ -3,7 +3,7 @@
 [pushplus(推送加)](https://www.pushplus.plus) 官方接口的 Python SDK，覆盖 **消息接口** 与 **全部开放接口**。
 
 - **消息接口**（`/send`、`/batchSend`）：单渠道 + 多渠道发送，含 Builder API。
-- **开放接口**（`/api/open/...` 与 `/push/api/open/...`）：用户、消息、消息 token、群组、群组用户、好友、webhook、渠道、ClawBot、QQ 机器人、功能设置、预处理信息、图片服务、push 表单、push 文档、push 表格、消息规则。
+- **开放接口**（`/api/open/...` 与 `/push/api/open/...`）：用户、消息、消息 token、群组、群组用户、好友、webhook、渠道、ClawBot、新消息 ClawBot、QQ 机器人、功能设置、预处理信息、图片服务、push 表单、push 文档、push 表格、消息规则。
 - **AccessKey 自动管理**：缓存 + 过期前自动刷新；`code=401` 自动刷新并重试一次。
 - **本地限流守卫**：命中 `code=900` 后按 token 短路同 token 后续发送，避免被服务端长期封禁。
 - **回调解析**：`message_complate`、`add_topic_user`、`add_friend` 三类回调统一解析。
@@ -135,6 +135,17 @@ topic_blacklist = client.topic_user.blacklist_list(TopicUserListQuery.of(1, 20, 
 
 # webhook 渠道
 webhooks = client.webhook.list()
+
+# 新消息 ClawBot：绑定 Channel API Key 后，channel 传 cmcc（仅中国移动）
+client.cmcc.bind("ak_xxxxxxxxxxxxxxxx")
+cmcc_info = client.cmcc.info()  # cmcc_info.bound == 1 表示已绑定
+client.cmcc.send_test()
+client.send(SendRequest(
+    title="服务告警",
+    content="订单服务响应超时",
+    channel=Channel.CMCC,
+    template=Template.TXT,
+))
 
 # QQ 机器人：绑定 -> 认领群 -> 建配置 -> 发到群
 from perk_pushplus import QqBotSaveRequest

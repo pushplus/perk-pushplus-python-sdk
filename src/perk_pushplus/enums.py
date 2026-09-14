@@ -42,6 +42,8 @@ class Channel(_StrCodeEnum):
     """App 渠道（安卓/鸿蒙/iOS）。"""
     CLAWBOT = "clawbot"
     """微信 ClawBot。"""
+    CMCC = "cmcc"
+    """新消息 ClawBot（中国移动 5G 消息）；仅支持中国移动用户。"""
     QQ = "qq"
     """QQ 机器人；不带 option 发给自己，option 填配置编码则发到对应 QQ 群。"""
 

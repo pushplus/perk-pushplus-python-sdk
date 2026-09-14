@@ -9,6 +9,7 @@ from .api import (
     AccessKeyApi,
     ChannelApi,
     ClawBotApi,
+    CmccApi,
     FriendApi,
     ImageApi,
     MessageApi,
@@ -79,6 +80,7 @@ class PushPlusClient:
         self.webhook = WebhookApi(config, self.http_requester, self.access_key_manager)
         self.channel = ChannelApi(config, self.http_requester, self.access_key_manager)
         self.claw_bot = ClawBotApi(config, self.http_requester, self.access_key_manager)
+        self.cmcc = CmccApi(config, self.http_requester, self.access_key_manager)
         self.qq_bot = QqBotApi(config, self.http_requester, self.access_key_manager)
         self.setting = SettingApi(config, self.http_requester, self.access_key_manager)
         self.pre = PreApi(config, self.http_requester, self.access_key_manager)
