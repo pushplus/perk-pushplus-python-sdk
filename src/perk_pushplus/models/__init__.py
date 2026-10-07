@@ -43,7 +43,10 @@ from .open_qqbot import (
     QqBotInfo,
     QqBotItem,
     QqBotSaveRequest,
+    QqCustomBotRequest,
     QqGroupItem,
+    QqMyBot,
+    QqMyBotList,
 )
 from .open_setting import UserDefaultDetail, UserDefaultItem, UserDefaultSaveRequest
 from .open_pre import PreDetail, PreItem, PreSaveRequest, PreTestRequest
@@ -129,6 +132,9 @@ __all__ = [
     "QqGroupItem",
     "QqBotItem",
     "QqBotSaveRequest",
+    "QqMyBot",
+    "QqMyBotList",
+    "QqCustomBotRequest",
     "UserDefaultItem",
     "UserDefaultDetail",
     "UserDefaultSaveRequest",

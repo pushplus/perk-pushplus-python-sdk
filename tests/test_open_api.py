@@ -396,7 +396,7 @@ def test_qq_bot_bind_and_group_config():
     req.push(
         "/api/open/qqBot/botInfo",
         200,
-        _ok({"isBind": 1, "receiveStatus": 1, "botInfo": {"appId": "1", "username": "pushplus"}}),
+        _ok({"isBind": 1, "receiveStatus": 1, "botInfo": {"botAppId": "1", "username": "pushplus"}}),
     )
     req.push(
         "/api/open/qqBot/groupList",
@@ -438,3 +438,76 @@ def test_qq_bot_bind_and_group_config():
     delete_call = next(c for c in req.calls if "/api/open/qqBot/delete" in c[1])
     assert delete_call[0] == "DELETE"
     assert "id=3" in delete_call[1]
+
+
+def test_qq_bot_custom_bot():
+    req = ScriptedRequester()
+    req.push(
+        "/api/open/qqBot/myBots",
+        200,
+        _ok({
+            "bots": [
+                {"botAppId": "1", "botType": 1, "isBind": 1, "isDefault": 1},
+                {"botAppId": "102", "botType": 2, "isBind": 0},
+            ],
+            "customBotCount": 1,
+            "customBotLimit": 5,
+            "serverIps": ["1.2.3.4"],
+        }),
+    )
+    req.push(
+        "/api/open/qqBot/customBot/preview",
+        200,
+        _ok({"botAppId": "102", "username": "my-bot", "botType": 2}),
+    )
+    req.push("/api/open/qqBot/customBot/add", 200, _ok(None))
+    req.push(
+        "/api/open/qqBot/getBindLink",
+        200,
+        _ok({"bindCode": "A1B2C3", "botAppId": "102", "botType": 2}),
+    )
+    req.push("/api/open/qqBot/groupList", 200, _ok([]))
+    req.push("/api/open/qqBot/setDefault", 200, _ok(None))
+    req.push("/api/open/qqBot/add", 200, _ok(None))
+    req.push("/api/open/qqBot/customBot/delete", 200, _ok(None))
+    client = _build_client(req)
+
+    from perk_pushplus import QqBotSaveRequest, QqCustomBotRequest
+    from perk_pushplus.api.qqbot import SEND_TYPE_SELF
+
+    mine = client.qq_bot.my_bots()
+    assert len(mine.bots) == 2
+    assert mine.bots[1].botType == 2
+    assert mine.bots[1].botAppId == "102"
+    assert mine.customBotLimit == 5
+    assert mine.serverIps == ["1.2.3.4"]
+
+    credential = QqCustomBotRequest(botAppId="102", appSecret="secret")
+    preview = client.qq_bot.preview_custom_bot(credential)
+    assert preview.username == "my-bot"
+    assert preview.botAppId == "102"
+    client.qq_bot.add_custom_bot(credential)
+    add_bot_call = next(c for c in req.calls if "/api/open/qqBot/customBot/add" in c[1])
+    assert json.loads(add_bot_call[3]) == {"botAppId": "102", "appSecret": "secret"}
+
+    link = client.qq_bot.get_bind_link(bot_app_id="102")
+    assert link.botType == 2
+    link_url = next(c for c in req.calls if "getBindLink" in c[1])[1]
+    assert "botAppId=102" in link_url
+    assert "refresh" not in link_url
+
+    client.qq_bot.group_list(bot_app_id="102")
+    assert "botAppId=102" in next(c for c in req.calls if "groupList" in c[1])[1]
+
+    client.qq_bot.set_default("102")
+    assert "botAppId=102" in next(c for c in req.calls if "setDefault" in c[1])[1]
+
+    client.qq_bot.add(QqBotSaveRequest(qqName="自有机器人私聊", qqCode="my-bot-self", sendType=SEND_TYPE_SELF, botAppId="102"))
+    add_body = json.loads(next(c for c in req.calls if "/api/open/qqBot/add" in c[1])[3])
+    assert add_body["sendType"] == 1
+    assert add_body["botAppId"] == "102"
+
+    client.qq_bot.delete_custom_bot("102")
+    delete_call = next(c for c in req.calls if "customBot/delete" in c[1])
+    assert delete_call[0] == "DELETE"
+    assert "?botAppId=102" in delete_call[1]

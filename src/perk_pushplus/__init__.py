@@ -111,7 +111,10 @@ from .models import (
     QqBotInfo,
     QqBotItem,
     QqBotSaveRequest,
+    QqCustomBotRequest,
     QqGroupItem,
+    QqMyBot,
+    QqMyBotList,
     SendCount,
     SendMessageResult,
     SendRequest,
@@ -136,7 +139,7 @@ from .models import (
 )
 from .rate_limit import RateLimitGuard
 
-__version__ = "1.2.4"
+__version__ = "1.2.5"
 
 __all__ = [
     "__version__",
@@ -218,6 +221,9 @@ __all__ = [
     "QqGroupItem",
     "QqBotItem",
     "QqBotSaveRequest",
+    "QqMyBot",
+    "QqMyBotList",
+    "QqCustomBotRequest",
     "UserDefaultItem",
     "UserDefaultDetail",
     "UserDefaultSaveRequest",

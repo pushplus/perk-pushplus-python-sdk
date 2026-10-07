@@ -157,9 +157,21 @@ client.send(SendRequest(
     title="服务告警",
     content="订单服务响应超时",
     channel=Channel.QQ,
-    option="ops-group",  # 不传 option 则发给自己
+    option="ops-group",  # 不传 option 则用默认机器人发给自己
     template=Template.TXT,
 ))
+
+# QQ 自有机器人：校验凭证 -> 添加 -> 扫码绑定 -> 设为默认 / 建“发给自己”配置
+from perk_pushplus import QqCustomBotRequest
+from perk_pushplus.api.qqbot import SEND_TYPE_SELF
+credential = QqCustomBotRequest(botAppId="102xxxxxx", appSecret="xxxx")
+preview = client.qq_bot.preview_custom_bot(credential)  # 返回机器人昵称头像，不保存
+client.qq_bot.add_custom_bot(credential)
+my_bots = client.qq_bot.my_bots()                      # 回调地址、IP 白名单、需订阅事件也在这里
+custom_link = client.qq_bot.get_bind_link(bot_app_id="102xxxxxx")
+custom_bind = client.qq_bot.bot_info(bot_app_id="102xxxxxx")
+client.qq_bot.set_default("102xxxxxx")                 # 不传 option 时改用该机器人
+client.qq_bot.add(QqBotSaveRequest(qqName="自有机器人私聊", qqCode="my-bot-self", sendType=SEND_TYPE_SELF, botAppId="102xxxxxx"))
 
 # 设置
 client.setting.change_is_send(1)  # 启用发送
